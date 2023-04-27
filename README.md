@@ -5,16 +5,38 @@ The purpose of this project is to discover drivers of churn in Telco customers a
 
 # Project Goal
  
-* the goal of this project is to develop a model that can predict if a customer will churn.
-* Deliver a notebook that documents your process from start to finish
+* To develop a model that can predict if a customer will churn.
 * Find drivers of churn
-* Include detailed comments that explain your process and decisions
-* Clearly call out the questions you are answering, the decisions you are making, and the processes you are using
-* Document your key takeaways and conclusions
-* Create module wrangle.py that contains functions that make your process repeateable
+* Create a model that performs better than the baseline
+* Document code and process well enough to be presented or read like a report
 
-# Initial Thoughts
+# Data Dictionary
+| **Column**          | **Description**                                           |
+|---------------------|-----------------------------------------------------------|
+| **Customer ID**     | Customer ID                                               |
+| **Gender**          | Whether the customer is a male or a female                |
+| **SeniorCitizen**   | Whether the customer is a senior citizen or not           |
+| **Partner**         | Whether the customer has a partner or not                 |
+| **Dependents**      | Whether the customer has dependents or not                |
+| **Tenure**          | Number of months the customer has stayed with the company |
+| **PhoneService**    | Whether the customer has a phone service or not           |
+| **Multiplelines**   | Whether the customer has multiple lines or not            |
+| **InternetService** | Customer’s internet service provider                      |
+| **OnlineSecurity**  | Whether the customer has online security or not           |
+| **OnlineBackup**    | Whether the customer has online backup or not             |
+| **DeviceProtection** | Whether the customer has device protection or not         |
+| **TechSupport**     | Whether the customer has tech support or not              |
+| **StreamingTV**     | Whether the customer has streaming TV or not              |
+| **StreamingMovies** | Whether the customer has streaming movies or not          |
+| **Contract**        | The contract term of the customer                         |
+| **PaperlessBilling** | Whether the customer has paperless billing or not         |
+| **PaymentMethod**   | The customer’s payment method                             |
+| **MonthlyCharges**  | The amount charged to the customer monthly                |
+| **TotalCharges**    | The total amount charged to the customer                  |
+| **Churn**           | Whether the customer churned or not                       |
 
+
+# Initial Thoughts 
 My initail thoughts are that the drivers of churn will be:
 * tenure
 * monthly charges
@@ -35,8 +57,8 @@ My initail thoughts are that the drivers of churn will be:
 * Explore data in search of drivers of churn
    * Answer the following initial questions
        * Is fiber optic a driver of churn?
-       * Is there a price threshold for specific services where customers are more likely to churn?
-       * Does tenure correlate with higher or lower churn?
+       * Is fiber optic price a driver of churn?
+       * Is contract type a driver of churn?
        * Are customers with dependents more likely to churn than those without?
       
 * Develop a Model to predict if a customer will churn
@@ -54,7 +76,18 @@ My initail thoughts are that the drivers of churn will be:
 4) Run notebook.
 
 # Takeaways and Conclusions
-* 
+* The drivers of churn are:
+    * tenure
+    * monthly charges
+    * fiber optic
+    * contract type
+    * dependents
+* The best model is the Logistic Regression model 
+* All performance metrics are better than the baseline of 73.46%
+
  
 # Recommendations
-* 
+ * Offer incentives to customers with fiber optic to switch to DSL
+ * Offer incentives to customers with monthly charges above the average to switch to a lower monthly charge
+ * Offer incentives to customers with month-to-month contracts to switch to a one or two year contract
+ * Offer incentives to customers without dependents to add dependents to their account

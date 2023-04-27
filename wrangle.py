@@ -55,7 +55,7 @@ def wrangle_telco_not_encoded(df):
     '''
     # Acuire data from codeup database
 
-    telco = df.drop(columns=['customer_id', 'payment_type_id', 'internet_service_type_id', 'contract_type_id'])
+    telco = df.drop(columns=['payment_type_id', 'internet_service_type_id', 'contract_type_id'])
     # Replace yes and no with 1 and 0
     telco['churn'] = telco['churn'].replace({'Yes': 1, 'No': 0})
     telco['partner'] = telco['partner'].replace({'Yes': 1, 'No': 0})
@@ -76,13 +76,20 @@ def wrangle_telco_encoded(df):
     '''
     # Acuire data from codeup database
 
-    telco = df.drop(columns=['customer_id', 'payment_type_id', 'internet_service_type_id', 'contract_type_id'])
+    telco = df.drop(columns=['payment_type_id', 'internet_service_type_id', 'contract_type_id'])
     # Replace yes and no with 1 and 0
     telco['churn'] = telco['churn'].replace({'Yes': 1, 'No': 0})
     telco['partner'] = telco['partner'].replace({'Yes': 1, 'No': 0})
     telco['dependents'] = telco['dependents'].replace({'Yes': 1, 'No': 0})
     telco['phone_service'] = telco['phone_service'].replace({'Yes': 1, 'No': 0})
     telco['paperless_billing'] = telco['paperless_billing'].replace({'Yes': 1, 'No': 0})
+    # Created a new column for internet_service_type
+    telco['internet_service_type_fiber_optic'] = telco['internet_service_type'].replace({'Fiber optic': 1, 'DSL': 0, 'None': 0})
+    telco['internet_service_type_dsl'] = telco['internet_service_type'].replace({'Fiber optic': 0, 'DSL': 1, 'None': 0})
+    telco['internet_service_type_none'] = telco['internet_service_type'].replace({'Fiber optic': 0, 'DSL': 0, 'None': 1})
+    # drop the original column
+    telco = telco.drop(columns='internet_service_type')
+
 
     # Replace blank spaces with 0 due to the fact that the customers have not been charged yet
     telco['total_charges'] = telco['total_charges'].replace(' ', '0')
@@ -90,58 +97,17 @@ def wrangle_telco_encoded(df):
     # Create numeric and categorical dataframes
     num = telco.select_dtypes(include="number")
     char = telco.select_dtypes(include="object")
+    # Drop customer_id from the char dataframe
+    char = char.drop(columns='customer_id')
+    # Create a customer_id dataframe to merge back with the telco dataframe
+    customer_id = telco[['customer_id']]
     # Create dummy variables for the object columns
     char_1 = pd.get_dummies(char, drop_first=True)
     # Concatenate the numeric and categorical dataframes
-    telco_clean = pd.concat([num, char_1], axis=1)
+    telco_clean = pd.concat([customer_id, num, char_1], axis=1)
 
     return telco_clean
 
-def eval_results(p):
-    alpha = .05
-    if p < alpha:
-        print("We reject the null hypothesis")
-    else:
-        print("We fail to reject the null hypothesis")
-
-
-def plot_churn_rate_by_internet_service_type():
-    df = wrangle_telco_not_encoded()
-    fiber_vs_dsl = df[df.internet_service_type != 'None']
-    sns.barplot(x='internet_service_type', y='churn', data=fiber_vs_dsl)
-    # Label the plot
-    plt.title('Churn Rate by Internet Service Type')
-    plt.xlabel('Internet Service Type')
-    plt.ylabel('Churn Rate')
-    plt.show()
-
-
-def chi2_test(observed):
-    chi2, p, degf, expected = stats.chi2_contingency(observed)
-    print('Observed\n')
-    print(observed.values)
-    print('---\nExpected\n')
-    print(expected)
-    print('---\n')
-    print(f'chi^2 = {chi2:.4f}')
-    print(f'p     = {p:.4f}')
-
-
-def chi2_test_for_churn_and_internet_service_type():
-    df = wrangle_telco_not_encoded()
-    observed = pd.crosstab(df.churn, df.internet_service_type)
-    chi2, p, degf, expected = stats.chi2_contingency(observed)
-    print('Observed\n')
-    print(observed.values)
-    print('---\nExpected\n')
-    print(expected)
-    print('---\n')
-    print(f'chi^2 = {chi2:.4f}')
-    print(f'p     = {p:.4f}')
-    if p < 0.05:
-        print("We reject the null hypothesis")
-    else:
-        print("We fail to reject the null hypothesis")
 
 
 # split the data into train, validate, and test
@@ -157,3 +123,4 @@ def train_validate_test(df, strat):
                                        random_state=123,
                                        stratify=train_validate[strat])
     return train, validate, test
+
